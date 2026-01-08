@@ -10,12 +10,26 @@ export default function AccountOperations() {
   const [loanPurpose, setLoanPurpose] = useState<string>("");
   const [currency, setCurrency] = useState<string>("USD");
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [successMessages, setSuccessMessages] = useState<
+    Record<string, string>
+  >({});
 
   const { isLoading, balance, loan } = useSelector(
     (store: RootState) => store.account
   );
 
   const dispatch = useDispatch<AppDispatch>();
+
+  const showSuccess = (fieldName: string, message: string) => {
+    setSuccessMessages((prev) => ({ ...prev, [fieldName]: message }));
+    setTimeout(() => {
+      setSuccessMessages((prev) => {
+        const newMessages = { ...prev };
+        delete newMessages[fieldName];
+        return newMessages;
+      });
+    }, 3000);
+  };
 
   const validateAmount = (amount: number, fieldName: string): boolean => {
     if (isNaN(amount) || amount <= 0) {
@@ -43,6 +57,14 @@ export default function AccountOperations() {
     if (!validateAmount(amount, "deposit")) return;
 
     dispatch(deposit(amount, currency));
+    const formattedAmount = new Intl.NumberFormat("en-US", {
+      style: "currency",
+      currency: "USD",
+    }).format(amount);
+    showSuccess(
+      "deposit",
+      `Deposit successful! ${formattedAmount} added to your account`
+    );
     setDepositAmount("");
   };
 
@@ -64,6 +86,14 @@ export default function AccountOperations() {
     }
 
     dispatch(withdraw(amount));
+    const formattedAmount = new Intl.NumberFormat("en-US", {
+      style: "currency",
+      currency: "USD",
+    }).format(amount);
+    showSuccess(
+      "withdraw",
+      `Withdrawal successful! ${formattedAmount} withdrawn`
+    );
     setWithdrawAmount("");
   };
 
@@ -93,6 +123,14 @@ export default function AccountOperations() {
     }
 
     dispatch(requestLoan(amount, loanPurpose));
+    const formattedAmount = new Intl.NumberFormat("en-US", {
+      style: "currency",
+      currency: "USD",
+    }).format(amount);
+    showSuccess(
+      "loan",
+      `Loan requested successfully! ${formattedAmount} loan approved`
+    );
     setLoanAmount("");
     setLoanPurpose("");
   };
@@ -114,7 +152,16 @@ export default function AccountOperations() {
       return;
     }
 
+    const loanAmountToPay = loan;
     dispatch(payLoan());
+    const formattedAmount = new Intl.NumberFormat("en-US", {
+      style: "currency",
+      currency: "USD",
+    }).format(loanAmountToPay);
+    showSuccess(
+      "payLoan",
+      `Loan paid successfully! ${formattedAmount} loan cleared`
+    );
   };
 
   return (
@@ -141,6 +188,9 @@ export default function AccountOperations() {
             />
             {errors.deposit && (
               <div style={{ color: "red" }}>{errors.deposit}</div>
+            )}
+            {successMessages.deposit && (
+              <div style={{ color: "green" }}>{successMessages.deposit}</div>
             )}
           </div>
 
@@ -176,6 +226,9 @@ export default function AccountOperations() {
           {errors.withdraw && (
             <div style={{ color: "red" }}>{errors.withdraw}</div>
           )}
+          {successMessages.withdraw && (
+            <div style={{ color: "green" }}>{successMessages.withdraw}</div>
+          )}
           <button onClick={handleWithdraw}>Withdraw</button>
         </div>
 
@@ -196,6 +249,9 @@ export default function AccountOperations() {
             }}
           />
           {errors.loan && <div style={{ color: "red" }}>{errors.loan}</div>}
+          {successMessages.loan && (
+            <div style={{ color: "green" }}>{successMessages.loan}</div>
+          )}
           <input
             type="text"
             value={loanPurpose}
@@ -223,6 +279,9 @@ export default function AccountOperations() {
           </button>
           {errors.payLoan && (
             <div style={{ color: "red" }}>{errors.payLoan}</div>
+          )}
+          {successMessages.payLoan && (
+            <div style={{ color: "green" }}>{successMessages.payLoan}</div>
           )}
         </div>
       </div>
