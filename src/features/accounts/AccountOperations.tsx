@@ -11,7 +11,6 @@ export default function AccountOperations() {
   const [currency, setCurrency] = useState<string>("USD");
 
   const { isLoading } = useSelector((store: RootState) => store.account);
-  console.log(isLoading);
 
   const dispatch = useDispatch<AppDispatch>();
 
