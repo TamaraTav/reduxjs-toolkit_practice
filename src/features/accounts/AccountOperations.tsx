@@ -1,7 +1,8 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../../store";
 import { deposit, payLoan, requestLoan, withdraw } from "./accountSlice";
+import "./AccountOperations.css";
 
 export default function AccountOperations() {
   const [depositAmount, setDepositAmount] = useState<string | number>("");
@@ -19,6 +20,20 @@ export default function AccountOperations() {
   );
 
   const dispatch = useDispatch<AppDispatch>();
+
+  // Clear payLoan error when loan or balance changes
+  useEffect(() => {
+    if (errors.payLoan) {
+      // Clear error if loan is paid off or balance becomes sufficient
+      if (loan === 0 || balance >= loan) {
+        setErrors((prev) => {
+          const newErrors = { ...prev };
+          delete newErrors.payLoan;
+          return newErrors;
+        });
+      }
+    }
+  }, [loan, balance, errors.payLoan]);
 
   const showSuccess = (fieldName: string, message: string) => {
     setSuccessMessages((prev) => ({ ...prev, [fieldName]: message }));
@@ -153,6 +168,12 @@ export default function AccountOperations() {
     }
 
     const loanAmountToPay = loan;
+    // Clear any existing errors before success
+    setErrors((prev) => {
+      const newErrors = { ...prev };
+      delete newErrors.payLoan;
+      return newErrors;
+    });
     dispatch(payLoan());
     const formattedAmount = new Intl.NumberFormat("en-US", {
       style: "currency",
@@ -165,124 +186,197 @@ export default function AccountOperations() {
   };
 
   return (
-    <div>
-      <h2>Your account operations</h2>
+    <div className="operations-container">
+      <h2 className="operations-title">Account Operations</h2>
 
-      <div>
-        <div>
-          <div>
-            <label>Deposit</label>
-            <input
-              type="number"
-              value={depositAmount}
-              onChange={(e) => {
-                setDepositAmount(e.target.value);
-                if (errors.deposit) {
-                  setErrors((prev) => {
-                    const newErrors = { ...prev };
-                    delete newErrors.deposit;
-                    return newErrors;
-                  });
-                }
-              }}
-            />
-            {errors.deposit && (
-              <div style={{ color: "red" }}>{errors.deposit}</div>
-            )}
-            {successMessages.deposit && (
-              <div style={{ color: "green" }}>{successMessages.deposit}</div>
-            )}
+      <div className="operations-grid">
+        <div className="operation-card">
+          <div className="operation-header">
+            <h3>Deposit</h3>
+            <span className="operation-icon">💰</span>
           </div>
+          <div className="operation-content">
+            <div className="form-group">
+              <label>Amount</label>
+              <input
+                type="number"
+                value={depositAmount}
+                onChange={(e) => {
+                  setDepositAmount(e.target.value);
+                  if (errors.deposit) {
+                    setErrors((prev) => {
+                      const newErrors = { ...prev };
+                      delete newErrors.deposit;
+                      return newErrors;
+                    });
+                  }
+                }}
+                placeholder="0.00"
+              />
+              {errors.deposit && (
+                <div className="error-message">{errors.deposit}</div>
+              )}
+              {successMessages.deposit && (
+                <div className="success-message">{successMessages.deposit}</div>
+              )}
+            </div>
 
-          <select
-            value={currency}
-            onChange={(e) => setCurrency(e.target.value)}
-          >
-            <option value="USD">USD</option>
-            <option value="EUR">EUR</option>
-            <option value="GBP">GBP</option>
-          </select>
-          <button onClick={handleDeposit} disabled={isLoading}>
-            {isLoading ? "Converting..." : "Deposit"}
-          </button>
+            <div className="form-group">
+              <label>Currency</label>
+              <select
+                value={currency}
+                onChange={(e) => setCurrency(e.target.value)}
+                className="currency-select"
+              >
+                <option value="USD">USD</option>
+                <option value="EUR">EUR</option>
+                <option value="GBP">GBP</option>
+              </select>
+            </div>
+
+            <button
+              onClick={handleDeposit}
+              disabled={isLoading}
+              className="operation-button deposit-button"
+            >
+              {isLoading ? "Converting..." : "Deposit"}
+            </button>
+          </div>
         </div>
 
-        <div>
-          <label>Withdraw</label>
-          <input
-            type="number"
-            value={withdrawAmount}
-            onChange={(e) => {
-              setWithdrawAmount(e.target.value);
-              if (errors.withdraw) {
-                setErrors((prev) => {
-                  const newErrors = { ...prev };
-                  delete newErrors.withdraw;
-                  return newErrors;
-                });
-              }
-            }}
-          />
-          {errors.withdraw && (
-            <div style={{ color: "red" }}>{errors.withdraw}</div>
-          )}
-          {successMessages.withdraw && (
-            <div style={{ color: "green" }}>{successMessages.withdraw}</div>
-          )}
-          <button onClick={handleWithdraw}>Withdraw</button>
+        <div className="operation-card">
+          <div className="operation-header">
+            <h3>Withdraw</h3>
+            <span className="operation-icon">💸</span>
+          </div>
+          <div className="operation-content">
+            <div className="form-group">
+              <label>Amount</label>
+              <input
+                type="number"
+                value={withdrawAmount}
+                onChange={(e) => {
+                  setWithdrawAmount(e.target.value);
+                  if (errors.withdraw) {
+                    setErrors((prev) => {
+                      const newErrors = { ...prev };
+                      delete newErrors.withdraw;
+                      return newErrors;
+                    });
+                  }
+                }}
+                placeholder="0.00"
+              />
+              {errors.withdraw && (
+                <div className="error-message">{errors.withdraw}</div>
+              )}
+              {successMessages.withdraw && (
+                <div className="success-message">
+                  {successMessages.withdraw}
+                </div>
+              )}
+            </div>
+            <div className="form-group-spacer"></div>
+            <button
+              onClick={handleWithdraw}
+              className="operation-button withdraw-button"
+            >
+              Withdraw
+            </button>
+          </div>
         </div>
 
-        <div>
-          <label>Request Loan</label>
-          <input
-            type="number"
-            value={loanAmount}
-            onChange={(e) => {
-              setLoanAmount(e.target.value);
-              if (errors.loan) {
-                setErrors((prev) => {
-                  const newErrors = { ...prev };
-                  delete newErrors.loan;
-                  return newErrors;
-                });
-              }
-            }}
-          />
-          {errors.loan && <div style={{ color: "red" }}>{errors.loan}</div>}
-          {successMessages.loan && (
-            <div style={{ color: "green" }}>{successMessages.loan}</div>
-          )}
-          <input
-            type="text"
-            value={loanPurpose}
-            onChange={(e) => {
-              setLoanPurpose(e.target.value);
-              if (errors.loanPurpose) {
-                setErrors((prev) => {
-                  const newErrors = { ...prev };
-                  delete newErrors.loanPurpose;
-                  return newErrors;
-                });
-              }
-            }}
-            placeholder="Loan purpose"
-          />
-          {errors.loanPurpose && (
-            <div style={{ color: "red" }}>{errors.loanPurpose}</div>
-          )}
-          <button onClick={handleRequestLoan}>Request Loan</button>
+        <div className="operation-card">
+          <div className="operation-header">
+            <h3>Request Loan</h3>
+            <span className="operation-icon">🏦</span>
+          </div>
+          <div className="operation-content">
+            <div className="form-group">
+              <label>Amount</label>
+              <input
+                type="number"
+                value={loanAmount}
+                onChange={(e) => {
+                  setLoanAmount(e.target.value);
+                  if (errors.loan) {
+                    setErrors((prev) => {
+                      const newErrors = { ...prev };
+                      delete newErrors.loan;
+                      return newErrors;
+                    });
+                  }
+                }}
+                placeholder="0.00"
+              />
+              {errors.loan && (
+                <div className="error-message">{errors.loan}</div>
+              )}
+              {successMessages.loan && (
+                <div className="success-message">{successMessages.loan}</div>
+              )}
+            </div>
+            <div className="form-group">
+              <label>Purpose</label>
+              <input
+                type="text"
+                value={loanPurpose}
+                onChange={(e) => {
+                  setLoanPurpose(e.target.value);
+                  if (errors.loanPurpose) {
+                    setErrors((prev) => {
+                      const newErrors = { ...prev };
+                      delete newErrors.loanPurpose;
+                      return newErrors;
+                    });
+                  }
+                }}
+                placeholder="e.g., Buy a car"
+              />
+              {errors.loanPurpose && (
+                <div className="error-message">{errors.loanPurpose}</div>
+              )}
+            </div>
+            <button
+              onClick={handleRequestLoan}
+              className="operation-button loan-button"
+            >
+              Request Loan
+            </button>
+          </div>
         </div>
 
-        <div>
-          <button onClick={handlePayLoan} disabled={loan === 0}>
-            Pay Loan {loan > 0 && `(${loan})`}
-          </button>
-          {errors.payLoan && (
-            <div style={{ color: "red" }}>{errors.payLoan}</div>
-          )}
-          {successMessages.payLoan && (
-            <div style={{ color: "green" }}>{successMessages.payLoan}</div>
-          )}
+        <div className="operation-card">
+          <div className="operation-header">
+            <h3>Pay Loan</h3>
+            <span className="operation-icon">✅</span>
+          </div>
+          <div className="operation-content">
+            {loan > 0 && (
+              <div className="loan-summary">
+                <p className="loan-amount-display">
+                  Outstanding:{" "}
+                  {new Intl.NumberFormat("en-US", {
+                    style: "currency",
+                    currency: "USD",
+                  }).format(loan)}
+                </p>
+              </div>
+            )}
+            {errors.payLoan && (
+              <div className="error-message">{errors.payLoan}</div>
+            )}
+            {successMessages.payLoan && (
+              <div className="success-message">{successMessages.payLoan}</div>
+            )}
+            <button
+              onClick={handlePayLoan}
+              disabled={loan === 0}
+              className="operation-button pay-loan-button"
+            >
+              Pay Loan
+            </button>
+          </div>
         </div>
       </div>
     </div>

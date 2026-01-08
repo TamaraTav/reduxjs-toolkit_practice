@@ -9,7 +9,7 @@ import { RootState } from "./store";
 function App() {
   const customer = useSelector((state: RootState) => state.customer);
   return (
-    <>
+    <div className="app-container">
       {!customer.fullName ? (
         <CreateCustomer />
       ) : (
@@ -19,7 +19,7 @@ function App() {
           <AccountOperations />
         </>
       )}
-    </>
+    </div>
   );
 }
 

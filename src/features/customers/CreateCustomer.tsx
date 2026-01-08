@@ -2,6 +2,7 @@ import { useState, FormEvent } from "react";
 import { useDispatch } from "react-redux";
 import { createCustomer } from "./customerSlice";
 import { AppDispatch } from "../../store";
+import "./CreateCustomer.css";
 
 export default function CreateCustomer() {
   const [fullName, setFullName] = useState<string>("");
@@ -46,11 +47,14 @@ export default function CreateCustomer() {
   };
 
   return (
-    <div>
-      <h2>Create Customer</h2>
-      <form onSubmit={handleCreateCustomer}>
-        <div>
-          <label htmlFor="name">Customer full name</label>
+    <div className="create-customer-card">
+      <div className="card-header">
+        <h2>Create Account</h2>
+        <p className="card-subtitle">Enter your details to get started</p>
+      </div>
+      <form onSubmit={handleCreateCustomer} className="customer-form">
+        <div className="form-group">
+          <label htmlFor="name">Full Name</label>
           <input
             type="text"
             id="name"
@@ -66,14 +70,15 @@ export default function CreateCustomer() {
               }
             }}
             onKeyPress={handleKeyPress}
+            placeholder="Enter your full name"
           />
           {errors.fullName && (
-            <div style={{ color: "red" }}>{errors.fullName}</div>
+            <div className="error-message">{errors.fullName}</div>
           )}
         </div>
 
-        <div>
-          <label htmlFor="nationalId">Customer National ID</label>
+        <div className="form-group">
+          <label htmlFor="nationalId">National ID</label>
           <input
             type="text"
             id="nationalId"
@@ -89,13 +94,16 @@ export default function CreateCustomer() {
               }
             }}
             onKeyPress={handleKeyPress}
+            placeholder="Enter your national ID"
           />
           {errors.nationalId && (
-            <div style={{ color: "red" }}>{errors.nationalId}</div>
+            <div className="error-message">{errors.nationalId}</div>
           )}
         </div>
 
-        <button type="submit">Create new Customer</button>
+        <button type="submit" className="submit-button">
+          Create Account
+        </button>
       </form>
     </div>
   );

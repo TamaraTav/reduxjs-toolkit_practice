@@ -1,0 +1,212 @@
+.operations-container {
+  width: 100%;
+  max-width: 1200px;
+}
+
+.operations-title {
+  text-align: center;
+  margin-bottom: 2rem;
+  font-size: 2rem;
+  color: var(--text-primary);
+}
+
+.operations-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.5rem;
+}
+
+.operation-card {
+  background: var(--bg-card);
+  border-radius: 16px;
+  padding: 1.5rem;
+  box-shadow: var(--shadow-lg);
+  border: 1px solid var(--border-color);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.operation-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-xl);
+}
+
+.operation-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.operation-header h3 {
+  font-size: 1.25rem;
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.operation-icon {
+  font-size: 1.5rem;
+}
+
+.operation-content {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  min-height: 320px;
+}
+
+.form-group-spacer {
+  flex: 1;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.form-group label {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.form-group input,
+.currency-select {
+  background: var(--bg-input);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 0.75rem 1rem;
+  font-size: 1rem;
+  color: var(--text-primary);
+  transition: all 0.2s;
+  font-family: inherit;
+}
+
+.form-group input:focus,
+.currency-select:focus {
+  outline: none;
+  border-color: var(--accent-primary);
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.form-group input::placeholder {
+  color: var(--text-muted);
+}
+
+.currency-select {
+  cursor: pointer;
+}
+
+.error-message {
+  color: var(--accent-error);
+  font-size: 0.875rem;
+  margin-top: 0.25rem;
+}
+
+.success-message {
+  color: var(--accent-success);
+  font-size: 0.875rem;
+  margin-top: 0.25rem;
+  font-weight: 500;
+}
+
+.operation-button {
+  background: var(--bg-tertiary);
+  color: var(--text-primary);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 0.875rem 1.5rem;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-family: inherit;
+  margin-top: auto;
+}
+
+.operation-button:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.operation-button:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.operation-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.deposit-button {
+  background: linear-gradient(135deg, var(--accent-success) 0%, #059669 100%);
+  border: none;
+  color: white;
+}
+
+.deposit-button:hover:not(:disabled) {
+  background: linear-gradient(135deg, #059669 0%, var(--accent-success) 100%);
+}
+
+.withdraw-button {
+  background: linear-gradient(135deg, var(--accent-error) 0%, #dc2626 100%);
+  border: none;
+  color: white;
+}
+
+.withdraw-button:hover:not(:disabled) {
+  background: linear-gradient(135deg, #dc2626 0%, var(--accent-error) 100%);
+}
+
+.loan-button {
+  background: linear-gradient(135deg, var(--accent-primary) 0%, #2563eb 100%);
+  border: none;
+  color: white;
+}
+
+.loan-button:hover:not(:disabled) {
+  background: linear-gradient(135deg, #2563eb 0%, var(--accent-primary) 100%);
+}
+
+.pay-loan-button {
+  background: linear-gradient(135deg, var(--accent-warning) 0%, #d97706 100%);
+  border: none;
+  color: white;
+}
+
+.pay-loan-button:hover:not(:disabled) {
+  background: linear-gradient(135deg, #d97706 0%, var(--accent-warning) 100%);
+}
+
+.loan-summary {
+  background: var(--bg-tertiary);
+  border-radius: 8px;
+  padding: 1rem;
+  margin-bottom: 0.5rem;
+}
+
+.loan-amount-display {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 0;
+  text-align: center;
+}
+
+@media (max-width: 768px) {
+  .operations-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .operations-title {
+    font-size: 1.75rem;
+  }
+
+  .operation-card {
+    padding: 1.25rem;
+  }
+}
