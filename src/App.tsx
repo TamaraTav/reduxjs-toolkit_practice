@@ -4,7 +4,7 @@ import BalanceDisplay from "./features/accounts/BalanceDisplay";
 import CreateCustomer from "./features/customers/CreateCustomer";
 import Customer from "./features/customers/Customer";
 import { useSelector } from "react-redux";
-import { RootState } from "../../store";
+import { RootState } from "./store";
 
 function App() {
   const customer = useSelector((state: RootState) => state.customer);
